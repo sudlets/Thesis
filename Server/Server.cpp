@@ -19,8 +19,8 @@
 #pragma comment(lib, "Ws2_32.lib")
 
 //using namespace std;
-mysqlx::Table* employees;
-mysqlx::Table* inaction;
+mysqlx::Table* Employees;
+mysqlx::Table* Inactions;
 struct worktime
 {
 	int Startwork;
@@ -33,12 +33,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 int main(int argc, char** argv)
 {
-	mysqlx::Session mySession("localhost", 33060, "eyeserver", "Borrow145!");
+	mysqlx::Session mySession("localhost", 33060, "user", "Pass");
 	mysqlx::Schema db = mySession.getSchema("mydb");
 	mysqlx::Table employeesMain = db.getTable("Employees");
-	mysqlx::Table inactionMain = db.getTable("Inaction");
-	employees = &employeesMain;
-	inaction = &inactionMain;
+	mysqlx::Table inactionMain = db.getTable("Inactions");
+	Employees = &employeesMain;
+	Inactions = &inactionMain;
 
 	//---
 
@@ -208,15 +208,15 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 						std::string rawtime;
 						worktime employee;
 
-						mysqlx::RowResult res = employees->select("*")
-							.where("Username like :param")
+						mysqlx::RowResult res = Employees->select("*")
+							.where("username like :param")
 							.bind("param", username).execute();						
 
 						if (res.count() == 0)
 						{
-							employees->insert("Username").values(username).execute();
-							res = employees->select("*")
-								.where("Username like :param")
+							Employees->insert("username").values(username).execute();
+							res = Employees->select("*")
+								.where("username like :param")
 								.bind("param", username).execute();
 						}
 
@@ -265,14 +265,14 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 							if (!(localtimeHourMin >= employee.Startlunch && localtimeHourMin <= employee.Endlunch))
 							{
 								std::cout << "AFK\n";
-								inaction->insert("idEmployee").values(id).execute();
+								Inactions->insert("idEmployees").values(id).execute();
 							}
 							else
 								std::cout << "Lunch\n";
 						}
 						else if(nohastime)
 						{
-							inaction->insert("idEmployee").values(id).execute();
+							Inactions->insert("idEmployees").values(id).execute();
 						}
 						else
 							std::cout << "Relax\n";
